@@ -1,61 +1,108 @@
 from flask import Flask, redirect, render_template, request
 from flask_sqlalchemy import SQLAlchemy
-from datetime import datetime
+from datetime import datetime, timedelta
 
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///todo.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///library.db'
 db = SQLAlchemy(app)
 
-class Todo(db.Model):
+class Book(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    content = db.Column(db.String(200), nullable=False)
-    date_created = db.Column(db.DateTime, default=datetime.utcnow)
+    name = db.Column(db.String(200), nullable=False)
+    description = db.Column(db.String(400))
+    date_added = db.Column(db.DateTime, default=datetime.now())
+    borrowed = db.Column(db.Boolean, default=False)
+    def __repr__(self):
+        return '<Book %r>' % self.id
+
+class User(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(200), nullable=False)
+    date_added = db.Column(db.DateTime, default=datetime.now())
 
     def __repr__(self):
-        return '<Task %r>' % self.id
+        return '<User %r>' % self.id
+
+class Borrow(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    book_id = db.Column(db.Integer, db.ForeignKey('book.id'))
+    date_borrowed = db.Column(db.DateTime, default=datetime.now())
+    date_expected_return = db.Column(db.DateTime, default=(datetime.now()+timedelta(days = 14)))
+    date_returned = db.Column(db.DateTime, default=None)
+
+    def __repr__(self):
+        return '<Borrow %r>' % self.id
 
 
-@app.route('/', methods=['POST', 'GET'])
-def index():
+@app.route('/books', methods=['POST', 'GET'])
+def books():
     if request.method == 'POST':
-        task_content = request.form['content']
-        new_task = Todo(content = task_content)
-        date = datetime
+        book_name = request.form['name']
+        book_description = request.form['description']
+        new_book = Book(name = book_name, description = book_description)
         try:
-            db.session.add(new_task)
+            db.session.add(new_book)
             db.session.commit()
-            return redirect('/')
+            return redirect('/books')
         except:
-            return 'There was an issue adding the task'
+            return 'There was an issue adding the book'
 
     else:
-        tasks = Todo.query.order_by(Todo.date_created).all()
-        return render_template('index.html', tasks=tasks)
+        books = Book.query.order_by(Book.date_added).all()
+        return render_template('books.html', books=books)
 
-@app.route('/delete/<int:id>')
-def delete(id):
-    task_to_delete = Todo.query.get_or_404(id)
-
+@app.route('/books/delete/<int:id>')
+def deletebook(id):
+    book_to_delete = Book.query.get_or_404(id)
     try:
-        db.session.delete(task_to_delete)
+        db.session.delete(book_to_delete)
         db.session.commit()
-        return redirect('/')
+        return redirect('/books')
     except:
-        return 'There was an issue deleting the task'
+        return 'There was an issue deleting the book'
 
-@app.route('/update/<int:id>', methods=['GET', 'POST'])
-def update(id):
-    task = Todo.query.get_or_404(id)
+@app.route('/books/update/<int:id>', methods=['GET', 'POST'])
+def updatebook(id):
+    book = Book.query.get_or_404(id)
     if request.method == 'POST':
-        task.content = request.form['content']
+        book.name = request.form['name']
+        book.description = request.form['description']
         try: 
             db.session.commit()
-            return redirect('/')  
+            return redirect('/books')  
         except:
-            return 'There was an issue updating the task'                
+            return 'There was an issue updating the book'                
     else:
-        return render_template('update.html', task=task)
+        return render_template('update.html', book=book)
+
+@app.route('/users', methods=['POST', 'GET'])
+def users():
+    if request.method == 'POST':
+        user_name = request.form['name']
+        new_user = User(name = user_name)
+        try:
+            db.session.add(new_user)
+            db.session.commit()
+            return redirect('/users')
+        except:
+            return 'There was an issue adding the user'
+
+    else:
+        users = User.query.order_by(User.date_added).all()
+        return render_template('users.html', users=users)
+
+@app.route('/users/delete/<int:id>')
+def deleteuser(id):
+    user_to_delete = User.query.get_or_404(id)
+
+    try:
+        db.session.delete(user_to_delete)
+        db.session.commit()
+        return redirect('/users')
+    except:
+        return 'There was an issue deleting the user'
 
 
 if __name__ == '__main__':
