@@ -1,0 +1,66 @@
+{% extends './base.html' %}
+
+{% block head %}
+<title>Library</title>
+{% endblock %}
+
+{% block body %}
+<div class="grid">
+    <div class="content">
+        <h1><a href = '/books'>Książki</a></h1>
+        {% if books|length < 1 %}
+            <h4>W Twojej bibliotece nie ma żadnych dodanych książek.</h4>
+        {% else %}
+        <form action="/search/book" method = "POST">
+            <input type="text" name = "name" id = "name">          
+            <input type="submit" value="Wyszukaj książkę">
+        </form>
+
+        <table>
+            <tr>
+                <th>Nazwa</th>
+                <th>Opis</th>
+                <th>Wypożyczona</th>
+            </tr>
+            {% for book in books %}
+            </tr>
+                <td>{{ book.name }}</td>
+                <td>{{ book.description }}</td>
+                {% if book.is_borrowed %}
+                    <td> Tak </td>
+                {% else %}
+                    <td> Nie </td>
+                {% endif %} 
+
+            <tr>
+            {% endfor %}
+
+        </table>
+        {% endif %} 
+    </div>
+    <div class="content">
+        <h1><a href = '/users'>Użytkownicy</a></h1>
+        {% if users|length < 1 %}
+            <h4>W Twojej bibliotece jeszcze nie ma żadnych użytkowników.</h4>
+        {% else %}
+        <form action="/search/user" method = "POST">
+            <input type="text" name = "name" id = "name">          
+            <input type="submit" value="Wyszukaj użytkownika">
+        </form>
+
+        <table>
+            <tr>
+                <th>Imię i nazwisko</th>
+            </tr>
+            {% for user in users %}
+            </tr>
+                <td>{{ user.name }}</td>
+            <tr>
+            {% endfor %}
+        </table>
+        {% endif %}
+    </div>
+</div>
+
+
+{% endblock %}

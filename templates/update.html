@@ -5,11 +5,12 @@
 {% endblock %}
 
 {% block body %}
-<div class="content">
-    <h1>Update Book</h1>
+<div class="grid">
+    <h1>Aktualizuj informacje</h1>
 
     <form action="/books/update/{{book.id}}" method = "POST">
         <input type="text" name = "name" id = "name" value="{{book.name}}">
+        <br>
         <textarea name = "description" id = "description" cols="40" rows="5" >{{book.description}}</textarea>
         <br>
         <input type="submit" value="Update Book">

@@ -1,0 +1,60 @@
+{% extends './base.html' %}
+
+{% block head %}
+<title>Biblioteka</title>
+{% endblock %}
+
+{% block body %}
+<div class="content">
+    <h1>{{user.name}}</h1>  
+    
+    <h3>Książki wypożyczone przez użytkownika.</h3>
+    {% if user_books|length < 1 %}
+        <h4>Użytkownik {{user.name}} aktualnie nie ma żadnych wypożyczonych książek, wypożycz książkę poniżej.</h4>
+    {% else %}
+    <table>
+        <tr>
+            <th>Nazwa</th>
+            <th>Do kiedy wypożyczona</th>
+            <th>Akcje</th>
+        </tr>
+        {% for book in user_books %}
+        </tr>
+            <td>{{ book.name }}</td>
+            <td>{{ book.date_expected_return.date() }}</td>
+            <td>
+                <a href="/user/return/{{user.id}}/{{book.id}}">Zwróć</a>
+                <br>
+                <a href="/user/borrow/extend/{{user.id}}/{{book.id}}">Przedłuż</a>
+            </td>
+        <tr>
+        {% endfor %}
+    </table>
+    {% endif %}
+
+    <h3>Książki dostępne do wypożyczenia.</h3>
+
+    {% if free_books|length < 1 %}
+    <h4>Wszystkie książki w bibliotece są wypożyczone.</h4>
+    {% else %}
+    <table>
+        <tr>
+            <th>Nazwa</th>
+            <th>Opis</th>
+            <th>Wypożycz</th>
+        </tr>
+        {% for book in free_books %}
+        </tr>
+            <td>{{ book.name }}</td>
+            <td>{{ book.description }}</td>
+            <td>
+                <a href="/user/borrow/{{user.id}}/{{book.id}}">Wypożycz</a>
+            </td>
+        <tr>
+        {% endfor %}
+    </table>
+    {% endif %}
+</div>
+
+
+{% endblock %}

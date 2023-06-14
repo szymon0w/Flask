@@ -1,27 +1,27 @@
 {% extends './base.html' %}
 
 {% block head %}
-<title>Library</title>
+<title>Biblioteka</title>
 {% endblock %}
 
 {% block body %}
 <div class="content">
-    <h1>users</h1>
+    <h1>Użytkownicy</h1>
     {% if users|length < 1 %}
-        <h4>There are no users, add one below.</h4>
+        <h4>Brak użytkowników, dodaj pierwszego poniżej.</h4>
 
     {% else %}
 
     <table>
         <tr>
-            <th>Name</th>
-            <th>Actions</th>
+            <th>Imię i nazwisko</th>
+            <th>Akcje</th>
         </tr>
         {% for user in users %}
         </tr>
-            <td>{{ user.name }}</td>
+            <td><a href = "/user/{{user.id}}">{{ user.name }}</a></td>
             <td>
-                <a href="/users/delete/{{user.id}}">Delete</a>
+                <a href="/users/delete/{{user.id}}">Usuń</a>
             </td>
         <tr>
         {% endfor %}
@@ -32,7 +32,7 @@
 
     <form action="/users" method = "POST">
         <input type="text" name = "name" id = "name">
-        <input type="submit" value="Add user">
+        <input type="submit" value="Dodaj użytkownika">
     </form>
     
 </div>
