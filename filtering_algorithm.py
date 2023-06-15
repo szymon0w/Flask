@@ -31,10 +31,8 @@ def filter_by_word(searched, A):
             for word in row.name.split():
                 best = min(levenschtein_distance(searched.lower(), word[:len(searched)].lower()), best)
         res[best].append(row)
-    print(res)
     result = []
     for i in range(len(res)):
         for j in range(len(res[i])):
             result.append(res[i][j])
-    print(result)
     return result
