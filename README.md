@@ -9,4 +9,5 @@ Library application with funcionalities such as:
 - extending the expected return date of the book
 - returning a book
 - searching
+<br/>
 Application was made with Flask, SQLLite and published on [Heroku](https://myfirstflaskapp-4b422bc84196.herokuapp.com).
