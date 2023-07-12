@@ -11,7 +11,7 @@ def get_definition(term_to_find: str):
             summary = wikipedia.summary(e.options[0], auto_suggest=False)
         except wikipedia.DisambiguationError as e:
             summary = wikipedia.summary(e.options[0], auto_suggest=True)
-    # if len(summary.split(". ")[0]) > 2:
-    #     return re.sub(r"\(.+?\)", '', ". \n".join(summary.split(". ")[:2]))
-    # else:
+        except:
+            return ''
+
     return re.sub(r"\(.+?\)", '', ". \n".join(summary.split(". ")))
